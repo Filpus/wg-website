@@ -12,8 +12,8 @@ class Culture(db.Model):
 
     id = db.Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     name = db.Column(String(50), unique=True, nullable=False)
-    population = db.Relationship('Pop',back_populates='cultures')
-    countries = db.Relationship('Country',back_populates='cultures')
+    population = db.relationship('Pop',back_populates='cultures')
+    countries = db.relationship('Country',back_populates='cultures')
 
 
 class Religion(db.Model):
@@ -21,18 +21,22 @@ class Religion(db.Model):
 
     id = db.Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     name = db.Column(String(50), unique=True, nullable=False)
-    population = db.Relationship('Pop',back_populates='religions')
-    countries = db.Relationship('Country',back_populates='religions')
+    population = db.relationship('Pop',back_populates='religions')
+    countries = db.relationship('Country',back_populates='religions')
 
-
+class Player(db.Model):
+    __tablename__ = 'players'
+    id = db.Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    name = db.Column(String(50), unique=True, nullable=False)
+    countries = db.relationship('Country',back_populates='players')
 class Resource(db.Model):
     __tablename__ = 'resources'
 
     id = db.Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     name = db.Column(String(50), unique=True, nullable=False)
     productionCost = db.Relationship('ProductionCost',back_populates='resources')
-    magazine = db.Relationship('Magazine',back_populates='resources')
-    resourcesInLocalisation = db.Relationship('ResourceInLocalisation',back_populates='resources')
+    magazine = db.relationship('Magazine',back_populates='resources')
+    resourcesInLocalisation = db.relationship('ResourceInLocalisation',back_populates='resources')
 
 
 
@@ -48,6 +52,8 @@ class Country(db.Model):
     culture = db.relationship('Culture', back_populates='countries')
     religionId = db.Column(Integer, ForeignKey('religions.id'), nullable=False)
     relion = db.relationship('Religion', back_populates='countries')
+    playerId = db.Column(Integer, ForeignKey('players.id'), nullable=False, unique=True)
+    player = db.relationship('Player', back_populates='countries')
     localisations = db.relationship('Localisation', back_populates='countries')
     orderedProductions = db.relationship('OrderedProduction', back_populates='countries')
     accessToUnits = db.relationship('AccessToUnit', back_populates='countries')
@@ -66,7 +72,7 @@ class Localisation(db.Model):
     fortification = db.Column(Integer, default=0)
     country_id = db.Column(Integer, ForeignKey('countries.id'), default=0)
     country = db.relationship('Country', back_populates='localisations')
-
+    population = db.relationship('Pop', back_populates='localisations')
 
 class UnitType(db.Model):
     __tablename__ = 'unitType'
@@ -177,6 +183,7 @@ class Estate(db.Model):
     takingPartInFood = db.Column(Float, default=0, nullable=False)
     manpower = db.Column(Float, default=0, nullable=False)
     baseHappiness = db.Column(Float, default=0, nullable=False)
+    picture = db.Column(String(1000))
 
     population = db.Relationship('Pop', back_populates='estate')
 
